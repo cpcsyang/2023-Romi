@@ -18,19 +18,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * (input) or Red LED (output) DIO 3 - Yellow LED (output only)
  */
 public class OnBoardIO extends SubsystemBase {
-  private final DigitalInput m_buttonA = new DigitalInput(0);
-  private final DigitalOutput m_yellowLed = new DigitalOutput(3);
+  private final DigitalInput buttonA = new DigitalInput(0);
+  private final DigitalOutput yellowLed = new DigitalOutput(3);
 
   // DIO 1
-  private final DigitalInput m_buttonB;
-  private final DigitalOutput m_greenLed;
+  private final DigitalInput buttonB;
+  private final DigitalOutput greenLed;
 
   // DIO 2
-  private final DigitalInput m_buttonC;
-  private final DigitalOutput m_redLed;
+  private final DigitalInput buttonC;
+  private final DigitalOutput redLed;
 
   private static final double MESSAGE_INTERVAL = 1.0;
-  private double m_nextMessageTime;
+  private double nextMessageTime;
 
   public enum ChannelMode {
     INPUT,
@@ -45,84 +45,84 @@ public class OnBoardIO extends SubsystemBase {
    */
   public OnBoardIO(ChannelMode dio1, ChannelMode dio2) {
     if (dio1 == ChannelMode.INPUT) {
-      m_buttonB = new DigitalInput(1);
-      m_greenLed = null;
+      buttonB = new DigitalInput(1);
+      greenLed = null;
     } else {
-      m_buttonB = null;
-      m_greenLed = new DigitalOutput(1);
+      buttonB = null;
+      greenLed = new DigitalOutput(1);
     }
 
     if (dio2 == ChannelMode.INPUT) {
-      m_buttonC = new DigitalInput(2);
-      m_redLed = null;
+      buttonC = new DigitalInput(2);
+      redLed = null;
     } else {
-      m_buttonC = null;
-      m_redLed = new DigitalOutput(2);
+      buttonC = null;
+      redLed = new DigitalOutput(2);
     }
   }
 
   /** Gets if the A button is pressed. */
   public boolean getButtonAPressed() {
-    return m_buttonA.get();
+    return buttonA.get();
   }
 
   /** Gets if the B button is pressed. */
   public boolean getButtonBPressed() {
-    if (m_buttonB != null) {
-      return m_buttonB.get();
+    if (buttonB != null) {
+      return buttonB.get();
     }
 
     double currentTime = Timer.getFPGATimestamp();
-    if (currentTime > m_nextMessageTime) {
+    if (currentTime > nextMessageTime) {
       DriverStation.reportError("Button B was not configured", true);
-      m_nextMessageTime = currentTime + MESSAGE_INTERVAL;
+      nextMessageTime = currentTime + MESSAGE_INTERVAL;
     }
     return false;
   }
 
   /** Gets if the C button is pressed. */
   public boolean getButtonCPressed() {
-    if (m_buttonC != null) {
-      return m_buttonC.get();
+    if (buttonC != null) {
+      return buttonC.get();
     }
 
     double currentTime = Timer.getFPGATimestamp();
-    if (currentTime > m_nextMessageTime) {
+    if (currentTime > nextMessageTime) {
       DriverStation.reportError("Button C was not configured", true);
-      m_nextMessageTime = currentTime + MESSAGE_INTERVAL;
+      nextMessageTime = currentTime + MESSAGE_INTERVAL;
     }
     return false;
   }
 
   /** Sets the green LED. */
   public void setGreenLed(boolean value) {
-    if (m_greenLed != null) {
-      m_greenLed.set(value);
+    if (greenLed != null) {
+      greenLed.set(value);
     } else {
       double currentTime = Timer.getFPGATimestamp();
-      if (currentTime > m_nextMessageTime) {
+      if (currentTime > nextMessageTime) {
         DriverStation.reportError("Green LED was not configured", true);
-        m_nextMessageTime = currentTime + MESSAGE_INTERVAL;
+        nextMessageTime = currentTime + MESSAGE_INTERVAL;
       }
     }
   }
 
   /** Sets the red LED. */
   public void setRedLed(boolean value) {
-    if (m_redLed != null) {
-      m_redLed.set(value);
+    if (redLed != null) {
+      redLed.set(value);
     } else {
       double currentTime = Timer.getFPGATimestamp();
-      if (currentTime > m_nextMessageTime) {
+      if (currentTime > nextMessageTime) {
         DriverStation.reportError("Red LED was not configured", true);
-        m_nextMessageTime = currentTime + MESSAGE_INTERVAL;
+        nextMessageTime = currentTime + MESSAGE_INTERVAL;
       }
     }
   }
 
   /** Sets the yellow LED. */
   public void setYellowLed(boolean value) {
-    m_yellowLed.set(value);
+    yellowLed.set(value);
   }
 
   @Override
