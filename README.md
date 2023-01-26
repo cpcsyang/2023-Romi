@@ -22,8 +22,8 @@ Tucpr3663!n the Romi on by sliding the power switch on the Romi 32U4 board to th
 
 2. Using your computer, connect to the Romi WiFi network using the SSID `WPILibPi-<number>` (where `<number>` is based on the Raspberry Pi serial number) with the WPA2 passphrase `WPILib2021!`. 
 > For CPR Team 3663: 
-> * Romi SSID is: `WPILibPi3663A` `WPILibPi3663B` etc
-> * Passphrase is: `cpr3663!`
+> * Romi SSID is: `WPILibPi3663A` `3663BlueRomi` etc
+> * Passphrase is: `Cpr3663!`
 
 3. Open a web browser and connect to the Raspberry Pi dashboard at either http://10.0.0.2/ or http://wpilibpi.local/
 
