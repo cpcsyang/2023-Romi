@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.RunMotorSim;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.MotorSim;
 import frc.robot.subsystems.OnBoardIO;
 import frc.robot.subsystems.OnBoardIO.ChannelMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -29,15 +31,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_drivetrain = new Drivetrain();
-  private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final OnBoardIO onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
+  private RunMotorSim runMotorSim;
+  private MotorSim motorSim = new MotorSim();
 
   // Assumes a gamepad plugged into channnel 0
   // private final Joystick m_controller = new Joystick(0);
-  private final CommandXboxController m_driverController = new CommandXboxController(Constants.DRIVER_CONTROLLER);
+  private final CommandXboxController driverController = new CommandXboxController(Constants.DRIVER_CONTROLLER);
 
   // Create SmartDashboard chooser for autonomous routines
-  private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Command> chooser = new SendableChooser<>();
 
   // NOTE: The I/O pin functionality of the 5 exposed I/O pins depends on the hardware "overlay"
   // that is specified when launching the wpilib-ws server on the Romi raspberry pi.
@@ -65,49 +69,49 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
-    m_drivetrain.setDefaultCommand(getArcadeDriveCommand());
+    drivetrain.setDefaultCommand(getArcadeDriveCommand());
 
     // Example of how to use the onboard IO
-    Trigger onboardButtonA = new Trigger(m_onboardIO::getButtonAPressed);
+    Trigger onboardButtonA = new Trigger(onboardIO::getButtonAPressed);
     onboardButtonA
         .onTrue(new PrintCommand("onBoardIO Button A Pressed"))
         .onFalse(new PrintCommand("onBoardIO Button A Released"));
 
     // Example of how to use the controller buttons
-    m_driverController.a()
+    driverController.a()
         .onTrue(new InstantCommand(() -> System.out.println("A button pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("A button released")));
-    m_driverController.leftBumper().and(m_driverController.rightBumper())
+    driverController.leftBumper().and(driverController.rightBumper())
         .onTrue(new InstantCommand(() -> System.out.println("Both L+R bumpers pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("Both L+R bumpers released")));
-    
-    m_driverController.x().or(m_driverController.y())
+
+    driverController.x().or(driverController.y())
         .onTrue(new InstantCommand(() -> System.out.println("X or Y pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("X or Y released")));
     double squeezeThreshold = 0.25;
-    m_driverController.rightTrigger(squeezeThreshold)
+    driverController.rightTrigger(squeezeThreshold)
         .onTrue(new InstantCommand(() -> System.out.println("Right Trigger squeezed > " + squeezeThreshold)))
         .onFalse(new InstantCommand(() -> System.out.println("Right Trigger released")));
-    m_driverController.leftStick()
+    driverController.leftStick()
         .onTrue(new InstantCommand(() -> System.out.println("Left Stick Clicked")))
         .onFalse(new InstantCommand(() -> System.out.println("Left Stick Released")));
-    m_driverController.b().and(m_driverController.povUp())
+    driverController.b().and(driverController.povUp())
         .onTrue(new InstantCommand(() -> System.out.println("B + povUP pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("B + povUP released")));
-    m_driverController.b().and(m_driverController.povLeft())
+    driverController.b().and(driverController.povLeft())
         .onTrue(new InstantCommand(() -> System.out.println("B + povLEFT pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("B + povLEFT released")));
-    m_driverController.b().and(m_driverController.povDown())
+    driverController.b().and(driverController.povDown())
         .onTrue(new InstantCommand(() -> System.out.println("B + povDOWN pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("B + povDOWN released")));
-    m_driverController.b().and(m_driverController.povRight())
+    driverController.b().and(driverController.povRight())
         .onTrue(new InstantCommand(() -> System.out.println("B + povRIGHT pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("B + povRIGHT released")));
 
     // Setup SmartDashboard options
-    m_chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(m_drivetrain));
-    m_chooser.addOption("Auto Routine Time", new AutonomousTime(m_drivetrain));
-    SmartDashboard.putData(m_chooser);
+    chooser.setDefaultOption("Auto Routine Distance", new AutonomousDistance(drivetrain));
+    chooser.addOption("Auto Routine Time", new AutonomousTime(drivetrain));
+    SmartDashboard.putData(chooser);
   }
 
   /**
@@ -116,7 +120,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    return chooser.getSelected();
   }
 
   /**
@@ -127,6 +131,6 @@ public class RobotContainer {
   public Command getArcadeDriveCommand() {
     return new ArcadeDrive(
         // m_drivetrain, () -> -m_controller.getRawAxis(1), () -> -m_controller.getRawAxis(2));
-        m_drivetrain, () -> -m_driverController.getLeftY(), () -> -m_driverController.getRightX());
+        drivetrain, () -> -driverController.getLeftY(), () -> -driverController.getRightX());
   }
 }

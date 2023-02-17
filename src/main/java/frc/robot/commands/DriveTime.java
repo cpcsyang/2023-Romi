@@ -8,10 +8,10 @@ import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class DriveTime extends CommandBase {
-  private final double m_duration;
-  private final double m_speed;
-  private final Drivetrain m_drive;
-  private long m_startTime;
+  private final double duration;
+  private final double speed;
+  private final Drivetrain drive;
+  private long startTime;
 
   /**
    * Creates a new DriveTime. This command will drive your robot for a desired speed and time.
@@ -21,34 +21,34 @@ public class DriveTime extends CommandBase {
    * @param drive The drivetrain subsystem on which this command will run
    */
   public DriveTime(double speed, double time, Drivetrain drive) {
-    m_speed = speed;
-    m_duration = time * 1000;
-    m_drive = drive;
+    this.speed = speed;
+    this.duration = time * 1000;
+    this.drive = drive;
     addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_startTime = System.currentTimeMillis();
-    m_drive.arcadeDrive(0, 0);
+    startTime = System.currentTimeMillis();
+    drive.arcadeDrive(0, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.arcadeDrive(m_speed, 0);
+    drive.arcadeDrive(speed, 0);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drive.arcadeDrive(0, 0);
+    drive.arcadeDrive(0, 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (System.currentTimeMillis() - m_startTime) >= m_duration;
+    return (System.currentTimeMillis() - startTime) >= duration;
   }
 }
