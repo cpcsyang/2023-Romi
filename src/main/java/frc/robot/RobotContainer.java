@@ -5,12 +5,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.commands.RunMotorSim;
+import frc.robot.commands.TurnTime;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.MotorSim;
 import frc.robot.subsystems.OnBoardIO;
@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -78,10 +80,17 @@ public class RobotContainer {
         .onFalse(new PrintCommand("onBoardIO Button A Released"));
 
     // Example of how to use the controller buttons
+    // driverController.a()
+    //     .onTrue(new InstantCommand(() -> System.out.println("A button pressed")))
+    //     .onFalse(new InstantCommand(() -> System.out.println("A button released")));
     driverController.a()
-        .onTrue(new InstantCommand(() -> System.out.println("A button pressed")))
-        .onFalse(new InstantCommand(() -> System.out.println("A button released")));
-    driverController.leftBumper().and(driverController.rightBumper())
+            .onTrue(new ParallelCommandGroup(new PrintCommand("1.. "))
+            .alongWith(new PrintCommand("2.. ")).alongWith(new PrintCommand("3.. ")));
+    driverController.b()
+            .onTrue(new SequentialCommandGroup(new TurnTime(0.5, 5, drivetrain))
+            .andThen(new TurnTime(-0.5, 5, drivetrain))
+            .andThen(new TurnTime(0.2, 10, drivetrain)));
+        driverController.leftBumper().and(driverController.rightBumper())
         .onTrue(new InstantCommand(() -> System.out.println("Both L+R bumpers pressed")))
         .onFalse(new InstantCommand(() -> System.out.println("Both L+R bumpers released")));
 
